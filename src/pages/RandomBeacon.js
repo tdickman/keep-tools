@@ -2,6 +2,8 @@ import React from 'react';
 import { useWeb3Context } from "web3-react";
 import { ethers } from 'ethers'
 import Web3Utils from 'web3-utils';
+import Header from '../components/Header';
+
 const RandomBeaconImpl = require("@keep-network/keep-core/artifacts/KeepRandomBeaconServiceImplV1.json")
 const RandomBeaconService = require("@keep-network/keep-core/artifacts/KeepRandomBeaconService.json")
 
@@ -41,6 +43,7 @@ export default function RandomBeacon(props) {
 
   return (
     <React.Fragment>
+      <Header />
       <h2>Random Beacon</h2>
       {active && account && (
         <div>
@@ -114,7 +117,7 @@ function RandomBeaconEntries() {
     <React.Fragment>
       <ul>
         {entries.map(entry => (
-          <li key={entry.requestId}>Entry {entry.requestId} - <a href={getEtherscanUrl(entry.transactionHash, networkId)}>{entry.value}</a></li>
+          <li key={entry.requestId}>Entry {entry.requestId} - <a target='_blank' href={getEtherscanUrl(entry.transactionHash, networkId)}>{entry.value}</a></li>
         ))}
       </ul>
     </React.Fragment>
