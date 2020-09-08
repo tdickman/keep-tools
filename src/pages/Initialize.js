@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import connectors from "../Connectors.js";
 import { Link } from 'react-router-dom';
 import { useWeb3Context } from "web3-react";
+import Header from '../components/Header';
 
 function Initialize(props) {
   const context = useWeb3Context();
@@ -12,6 +13,7 @@ function Initialize(props) {
   else {
   return (
     <React.Fragment>
+      <Header />
       <h2>Keep Tools</h2>
       {context.active && (
         <button onClick={() => context.unsetConnector()}>
@@ -25,16 +27,6 @@ function Initialize(props) {
           <p>Connected account is: {context.account}</p>
       )}
       {context.error && <p>Something went wrong.  Please try connecting to your Web3 provider again.</p>}
-      <div>
-        {context.active && context.account && (
-          <div>
-            <p>Available applications:</p>
-            <ul>
-              <li><Link to='/random-beacon'>Random Beacon</Link></li>
-            </ul>
-          </div>
-        )}
-      </div>
     </React.Fragment>
   );
   }
