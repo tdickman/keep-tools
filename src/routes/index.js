@@ -1,11 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Initialize from '../pages/Initialize';
-import RandomBeacon from '../pages/RandomBeacon';
+import RandomBeaconEntries from '../pages/RandomBeaconEntries';
 import { useWeb3Context } from "web3-react";
 import { HashRouter } from 'react-router-dom';
 import Header from '../components/Header';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
 
 export default function Routes() {
   const context = useWeb3Context();
@@ -15,12 +16,14 @@ export default function Routes() {
       <Header />
       <br/>
       {!context.active && (
-      <Button variant="primary" onClick={() => context.setConnector('Metamask')}>
-          Connect with Metamask
-      </Button>)}
+      <Container>
+        <Button variant="primary" onClick={() => context.setConnector('Metamask')}>
+            Connect with Metamask
+        </Button>
+      </Container>)}
       {context.active && <HashRouter>
         <Route path="/" exact component={Initialize} />
-        <Route path="/random-beacon" component={RandomBeacon} />
+        <Route path="/random-beacon/entries" component={RandomBeaconEntries} />
       </HashRouter>}
     </div>
   );
