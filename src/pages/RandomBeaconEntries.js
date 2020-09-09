@@ -36,7 +36,6 @@ export default function RandomBeaconEntries(props) {
           <p>Entry Fee: <RandomBeaconEntryFee /> ETH</p>
         </div>
       )}
-      {transactionHash && <p>{transactionHash}</p>}
       <Entries />
     </Container>
   )
@@ -125,7 +124,6 @@ function Entries() {
     <React.Fragment>
       <ul>
         {Object.keys(requestedEntries).sort(function(a, b){return a-b}).reverse().map(requestId => (
-          //<li key={entry.requestId}>Entry {entry.requestId} - <a target='_blank' href={getEtherscanUrl(entry.transactionHash, networkId)}>{entry.value}</a></li>
           <li key={requestId}>{requestId}{requestedEntries[requestId] ? <span> - <a target='_blank' href={getEtherscanUrl(requestedEntries[requestId].txHash, networkId)}>Requested</a></span> : ''}{generatedEntries[requestId] ? <span> - <a target='_blank' href={getEtherscanUrl(generatedEntries[requestId].txHash, networkId)}>Generated</a> - {generatedEntries[requestId].value}</span> : ''}</li>
         ))}
       </ul>
