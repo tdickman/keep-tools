@@ -3,6 +3,8 @@ import { useWeb3Context } from "web3-react";
 import { ethers } from 'ethers'
 import Web3Utils from 'web3-utils';
 import Header from '../components/Header';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
 
 const RandomBeaconImpl = require("@keep-network/keep-core/artifacts/KeepRandomBeaconServiceImplV1.json")
 const RandomBeaconService = require("@keep-network/keep-core/artifacts/KeepRandomBeaconService.json")
@@ -28,17 +30,19 @@ export default function RandomBeacon(props) {
   return (
     <React.Fragment>
       <Header />
-      <h2>Random Beacon</h2>
-      {active && account && (
-        <div>
-          <button onClick={requestBeacon}>
-            Request Random Number
-          </button>
-          <p>Entry Fee: <RandomBeaconEntryFee /> ETH</p>
-        </div>
-      )}
-      {transactionHash && <p>{transactionHash}</p>}
-      <RandomBeaconEntries />
+      <Container>
+        <h2>Random Beacon</h2>
+        {active && account && (
+          <div>
+            <Button variant="primary" onClick={requestBeacon}>
+              Request Random Number
+            </Button>
+            <p>Entry Fee: <RandomBeaconEntryFee /> ETH</p>
+          </div>
+        )}
+        {transactionHash && <p>{transactionHash}</p>}
+        <RandomBeaconEntries />
+      </Container>
     </React.Fragment>
   )
 }
@@ -82,7 +86,7 @@ function RandomBeaconEntries() {
       let initialRequestedEntries = {}
       for (let ev of requestedEvents) {
         requestedEntries[ev.args[0].toNumber()] = {
-          generationTxHash: ev.transactionHash
+          txHash: ev.transactionHash
         }
       }
       setRequestedEntries(requestedEntries)
@@ -94,7 +98,7 @@ function RandomBeaconEntries() {
       for (let ev of generatedEvents) {
         initialGeneratedEntries[ev.args[0].toNumber()] = {
           value: ev.args[1].toString(),
-          requestTxHash: ev.transactionHash
+          txHash: ev.transactionHash
         }
       }
       setGeneratedEntries(initialGeneratedEntries)
@@ -104,7 +108,7 @@ function RandomBeaconEntries() {
         if (ev.event === 'RelayEntryRequested') {
           setRequestedEntries(prevState => ({
             ...prevState,
-            [ev.args[0].toNumber()]: {generationTxHash: ev.transactionHash}
+            [ev.args[0].toNumber()]: {txHash: ev.transactionHash}
           }))
         }
 
@@ -113,7 +117,7 @@ function RandomBeaconEntries() {
             ...prevState,
             [ev.args[0].toNumber()]: {
               value: ev.args[1].toString(),
-              requestTxHash: ev.transactionHash
+              txHash: ev.transactionHash
             }
           }))
         }
@@ -127,7 +131,7 @@ function RandomBeaconEntries() {
       <ul>
         {Object.keys(requestedEntries).sort(function(a, b){return a-b}).reverse().map(requestId => (
           //<li key={entry.requestId}>Entry {entry.requestId} - <a target='_blank' href={getEtherscanUrl(entry.transactionHash, networkId)}>{entry.value}</a></li>
-          <li key={requestId}>{requestId}{requestedEntries[requestId] ? <span> - <a target='_blank' href={getEtherscanUrl(requestedEntries[requestId].requestTxHash, networkId)}>Requested</a></span> : ''}{generatedEntries[requestId] ? <span> - <a target='_blank' href={getEtherscanUrl(generatedEntries[requestId].generationTxHash, networkId)}>Generated</a> - {generatedEntries[requestId].value}</span> : ''}</li>
+          <li key={requestId}>{requestId}{requestedEntries[requestId] ? <span> - <a target='_blank' href={getEtherscanUrl(requestedEntries[requestId].txHash, networkId)}>Requested</a></span> : ''}{generatedEntries[requestId] ? <span> - <a target='_blank' href={getEtherscanUrl(generatedEntries[requestId].txHash, networkId)}>Generated</a> - {generatedEntries[requestId].value}</span> : ''}</li>
         ))}
       </ul>
     </React.Fragment>
