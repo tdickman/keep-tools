@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Initialize from '../pages/Initialize';
 import RandomBeaconEntries from '../pages/RandomBeaconEntries';
+import RandomBeaconGroups from '../pages/RandomBeaconGroups';
 import { useWeb3Context } from "web3-react";
 import { HashRouter } from 'react-router-dom';
 import Header from '../components/Header';
@@ -24,6 +25,7 @@ export default function Routes() {
       {context.active && <HashRouter>
         <Route path="/" exact component={Initialize} />
         <Route path="/random-beacon/entries" component={RandomBeaconEntries} />
+        <Route path="/random-beacon/groups" component={RandomBeaconGroups} />
       </HashRouter>}
     </div>
   );

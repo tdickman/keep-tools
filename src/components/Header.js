@@ -13,6 +13,7 @@ export default function Header(props) {
           <Nav.Link href="#/">Home</Nav.Link>
           <NavDropdown title="Random Beacon" id="basic-nav-dropdown">
             <NavDropdown.Item href="#random-beacon/entries">Entries</NavDropdown.Item>
+            <NavDropdown.Item href="#random-beacon/groups">Groups</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       </Navbar.Collapse>

@@ -17,7 +17,6 @@ function getEtherscanUrl(transactionHash, networkId) {
 
 export default function RandomBeaconEntries(props) {
   const { active, account, library, networkId } = useWeb3Context();
-  const [transactionHash, setTransactionHash] = React.useState()
   const signer = library.getSigner();
   const serviceContract = new ethers.Contract(RandomBeaconService.networks[networkId].address, RandomBeaconImpl.abi, signer);
   
@@ -28,7 +27,7 @@ export default function RandomBeaconEntries(props) {
 
   return (
     <Container>
-      <h2>Random Beacon</h2>
+      <h2>Random Beacon Entries</h2>
       {active && account && (
         <div>
           <Button variant="primary" onClick={requestBeacon}>
@@ -44,7 +43,7 @@ export default function RandomBeaconEntries(props) {
 }
 
 function RandomBeaconEntryFee() {
-  const { library, networkId, utils } = useWeb3Context();
+  const { library, networkId } = useWeb3Context();
   const signer = library.getSigner();
   const serviceContract = new ethers.Contract(RandomBeaconService.networks[networkId].address, RandomBeaconImpl.abi, signer);
 
