@@ -2,7 +2,6 @@ import React from 'react';
 import { useWeb3Context } from "web3-react";
 import { ethers } from 'ethers'
 import Web3Utils from 'web3-utils';
-import Header from '../components/Header';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
@@ -28,22 +27,19 @@ export default function RandomBeacon(props) {
   }
 
   return (
-    <React.Fragment>
-      <Header />
-      <Container>
-        <h2>Random Beacon</h2>
-        {active && account && (
-          <div>
-            <Button variant="primary" onClick={requestBeacon}>
-              Request Random Number
-            </Button>
-            <p>Entry Fee: <RandomBeaconEntryFee /> ETH</p>
-          </div>
-        )}
-        {transactionHash && <p>{transactionHash}</p>}
-        <RandomBeaconEntries />
-      </Container>
-    </React.Fragment>
+    <Container>
+      <h2>Random Beacon</h2>
+      {active && account && (
+        <div>
+          <Button variant="primary" onClick={requestBeacon}>
+            Request Random Number
+          </Button>
+          <p>Entry Fee: <RandomBeaconEntryFee /> ETH</p>
+        </div>
+      )}
+      {transactionHash && <p>{transactionHash}</p>}
+      <RandomBeaconEntries />
+    </Container>
   )
 }
 

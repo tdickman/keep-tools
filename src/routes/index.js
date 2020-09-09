@@ -4,6 +4,7 @@ import Initialize from '../pages/Initialize';
 import RandomBeacon from '../pages/RandomBeacon';
 import { useWeb3Context } from "web3-react";
 import { HashRouter } from 'react-router-dom';
+import Header from '../components/Header';
 import Button from 'react-bootstrap/Button';
 
 export default function Routes() {
@@ -11,6 +12,8 @@ export default function Routes() {
 
   return (
     <div>
+      <Header />
+      <br/>
       {!context.active && (
       <Button variant="primary" onClick={() => context.setConnector('Metamask')}>
           Connect with Metamask
