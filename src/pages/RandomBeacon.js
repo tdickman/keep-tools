@@ -21,24 +21,8 @@ export default function RandomBeacon(props) {
   const serviceContract = new ethers.Contract(RandomBeaconService.networks[networkId].address, RandomBeaconImpl.abi, signer);
   
   async function requestBeacon() {
-    // TODO: use networkId from context object here
-    const ret = new Promise((res, rej) => {
-      serviceContract.on("*", function (ev) {
-        if (ev.event === 'RelayEntryGenerated') {
-          console.log(`[https://ropsten.etherscan.io/tx/${ev.transactionHash}] generated ${ev.args[0]}`);
-          serviceContract.removeAllListeners();
-          res({txHash: ev.transactionHash, num: ev.args[1]});
-        }
-      });
-    });
     const entryFee = await serviceContract.entryFeeEstimate(0);
     const relayEntry = await serviceContract['requestRelayEntry()']({value: entryFee});
-
-    console.log('waiting for entry')
-    const r = await relayEntry.wait();
-    console.log(`entry submitted`);
-
-    return ret;
   }
 
   return (
@@ -86,28 +70,53 @@ function RandomBeaconEntries() {
   const signer = library.getSigner();
   const serviceContract = new ethers.Contract(RandomBeaconService.networks[networkId].address, RandomBeaconImpl.abi, signer);
 
-  const [entries, setEntries] = React.useState([])
+  const [requestedEntries, setRequestedEntries] = React.useState({})
+  const [generatedEntries, setGeneratedEntries] = React.useState({})
 
   React.useEffect(() => {
     async function fetchData() {
-      const filter = serviceContract.filters.RelayEntryGenerated(null, null)
-      const events = await serviceContract.queryFilter(filter)
-      let initialEntries = []
-      for (let ev of events) {
-        initialEntries.push({
-          requestId: ev.args[0].toNumber(),
-          value: ev.args[1].toString(),
-          transactionHash: ev.transactionHash
-        })
-      }
-      setEntries(initialEntries)
 
-      serviceContract.on(filter, function(ev) {
-        console.log(ev)
-      })
+      // RelayEntryRequested
+      const requestedFilter = serviceContract.filters.RelayEntryRequested(null)
+      const requestedEvents = await serviceContract.queryFilter(requestedFilter)
+      let initialRequestedEntries = {}
+      for (let ev of requestedEvents) {
+        requestedEntries[ev.args[0].toNumber()] = {
+          generationTxHash: ev.transactionHash
+        }
+      }
+      setRequestedEntries(requestedEntries)
+
+      // RelayEntryGenerated
+      const generatedFilter = serviceContract.filters.RelayEntryGenerated(null, null)
+      const generatedEvents = await serviceContract.queryFilter(generatedFilter)
+      let initialGeneratedEntries = {}
+      for (let ev of generatedEvents) {
+        initialGeneratedEntries[ev.args[0].toNumber()] = {
+          value: ev.args[1].toString(),
+          requestTxHash: ev.transactionHash
+        }
+      }
+      setGeneratedEntries(initialGeneratedEntries)
+
       serviceContract.on('*', function(ev) {
-        console.log("ALL")
         console.log(ev)
+        if (ev.event === 'RelayEntryRequested') {
+          setRequestedEntries(prevState => ({
+            ...prevState,
+            [ev.args[0].toNumber()]: {generationTxHash: ev.transactionHash}
+          }))
+        }
+
+        if (ev.event === 'RelayEntryGenerated') {
+          setGeneratedEntries(prevState => ({
+            ...prevState,
+            [ev.args[0].toNumber()]: {
+              value: ev.args[1].toString(),
+              requestTxHash: ev.transactionHash
+            }
+          }))
+        }
       })
     }
     fetchData()
@@ -116,8 +125,9 @@ function RandomBeaconEntries() {
   return (
     <React.Fragment>
       <ul>
-        {entries.map(entry => (
-          <li key={entry.requestId}>Entry {entry.requestId} - <a target='_blank' href={getEtherscanUrl(entry.transactionHash, networkId)}>{entry.value}</a></li>
+        {Object.keys(requestedEntries).sort(function(a, b){return a-b}).reverse().map(requestId => (
+          //<li key={entry.requestId}>Entry {entry.requestId} - <a target='_blank' href={getEtherscanUrl(entry.transactionHash, networkId)}>{entry.value}</a></li>
+          <li key={requestId}>{requestId}{requestedEntries[requestId] ? <span> - <a target='_blank' href={getEtherscanUrl(requestedEntries[requestId].requestTxHash, networkId)}>Requested</a></span> : ''}{generatedEntries[requestId] ? <span> - <a target='_blank' href={getEtherscanUrl(generatedEntries[requestId].generationTxHash, networkId)}>Generated</a> - {generatedEntries[requestId].value}</span> : ''}</li>
         ))}
       </ul>
     </React.Fragment>
