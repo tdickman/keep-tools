@@ -3,6 +3,7 @@ import { useWeb3Context } from "web3-react";
 import { ethers } from 'ethers'
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
+import { Link } from 'react-router-dom';
 import { getEtherscanUrl } from '../utils';
 
 import KeepRandomBeaconOperator from "@keep-network/keep-core/artifacts/KeepRandomBeaconOperator.json"
@@ -106,6 +107,7 @@ function ListGroups(props) {
             <th>Group Size</th>
             <th>Created</th>
             <th>TX</th>
+            <th>Details</th>
           </tr>
         </thead>
         <tbody>
@@ -117,6 +119,7 @@ function ListGroups(props) {
               <td>{group.groupSize}</td>
               <td>{group.created}</td>
               <td><a href={getEtherscanUrl(group.txHash, networkId)}>TX</a></td>
+              <td><Link to={`/random-beacon/groups/${group.created}`}>Details</Link></td>
             </tr>
           ))}
         </tbody>

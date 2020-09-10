@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Initialize from '../pages/Initialize';
 import RandomBeaconEntries from '../pages/RandomBeaconEntries';
 import RandomBeaconGroups from '../pages/RandomBeaconGroups';
+import RandomBeaconGroupDetails from '../pages/RandomBeaconGroupDetails';
 import { useWeb3Context } from "web3-react";
 import { HashRouter } from 'react-router-dom';
 import Header from '../components/Header';
@@ -23,12 +24,12 @@ export default function Routes() {
                   position: 'absolute', left: '50%', top: '50%',
                     transform: 'translate(-50%, -50%)'
               }}>
-          <div style={{width: '50%', margin: 'auto', paddingBottom: '10px'}}>
+          <div style={{display: 'flex', justifyContent: 'center', paddingBottom: '10px'}}>
             <Button variant="primary" onClick={() => context.setConnector('Metamask')}>
               Connect with Metamask
             </Button>
           </div>
-          <p>Please make sure you have metamask installed and set to the ropsten network</p>
+          <p style={{textAlign: 'center'}}>Please make sure you have metamask installed and set to the ropsten network</p>
         </div>
       </Container>)}
       {context.active && SUPPORTED_NETWORKS.indexOf(context.networkId) === -1 &&
@@ -36,8 +37,9 @@ export default function Routes() {
       }
       {context.active && <HashRouter>
         <Route path="/" exact component={Initialize} />
-        <Route path="/random-beacon/entries" component={RandomBeaconEntries} />
-        <Route path="/random-beacon/groups" component={RandomBeaconGroups} />
+        <Route path="/random-beacon/entries" exact component={RandomBeaconEntries} />
+        <Route path="/random-beacon/groups" exact component={RandomBeaconGroups} />
+        <Route path="/random-beacon/groups/:blockNumber" exact component={RandomBeaconGroupDetails} />
       </HashRouter>}
     </div>
   );
