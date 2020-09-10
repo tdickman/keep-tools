@@ -23,7 +23,7 @@ export default function Routes() {
                   position: 'absolute', left: '50%', top: '50%',
                     transform: 'translate(-50%, -50%)'
               }}>
-          <div style={{width: '50%', margin: 'auto', 'padding-bottom': '10px'}}>
+          <div style={{width: '50%', margin: 'auto', paddingBottom: '10px'}}>
             <Button variant="primary" onClick={() => context.setConnector('Metamask')}>
               Connect with Metamask
             </Button>

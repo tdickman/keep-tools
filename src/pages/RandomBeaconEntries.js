@@ -4,16 +4,10 @@ import { ethers } from 'ethers'
 import Web3Utils from 'web3-utils';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import { getEtherscanUrl } from '../utils';
 
 const RandomBeaconImpl = require("@keep-network/keep-core/artifacts/KeepRandomBeaconServiceImplV1.json")
 const RandomBeaconService = require("@keep-network/keep-core/artifacts/KeepRandomBeaconService.json")
-
-function getEtherscanUrl(transactionHash, networkId) {
-  if (networkId == 3) {
-    return `https://ropsten.etherscan.io/tx/${transactionHash}`
-  }
-  return `https://etherscan.io/tx/${transactionHash}`
-}
 
 export default function RandomBeaconEntries(props) {
   const { active, account, library, networkId } = useWeb3Context();
