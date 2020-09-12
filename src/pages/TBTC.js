@@ -47,17 +47,14 @@ function KeepList() {
   React.useEffect(() => {
     async function fetchData() {
       let keepCount = await factory.getKeepCount()
-      for (let i = 0; i < keepCount; i++) {
+      for (let i = keepCount-1; i >= 0; i--) {
         const keepAddress = await factory.getKeepAtIndex(i)
         const keep = new ethers.Contract(keepAddress, BondedECDSAKeep.abi, signer)
-        const isActive = await keep.isActive()
+        const [members, keepPublicKey, isActive, bondWei] = await Promise.all([keep.getMembers(), keep.publicKey(), keep.isActive(), keep.checkBondAmount()])
         if (!isActive) {
           continue
         }
-        const keepPublicKey = await keep.publicKey()
-        const members = await keep.getMembers()
-        let bond = await keep.checkBondAmount()
-        bond = Web3Utils.fromWei(bond._hex)
+        const bond = Web3Utils.fromWei(bondWei._hex)
 
         setKeeps(o => [...o, {
           index: i,
@@ -72,7 +69,7 @@ function KeepList() {
 
   // A table of keeps, and their status
   return (
-    <Table striped bordered hover>
+    <Table striped bordered hover style={{tableLayout: "fixed"}}>
       <thead>
         <tr>
           <th>Index</th>
@@ -87,7 +84,7 @@ function KeepList() {
             <td>{k.index}</td>
             <td>{k.isActive.toString()}</td>
             <td>{k.bond} ETH</td>
-            <td>{k.publicKey}</td>
+            <td style={{textOverflow: 'ellipsis', overflow: 'hidden', whitespace: 'nowrap'}}>{k.publicKey}</td>
           </tr>
         ))}
       </tbody>
