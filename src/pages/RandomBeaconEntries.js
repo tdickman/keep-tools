@@ -5,6 +5,7 @@ import Web3Utils from 'web3-utils';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
+import { Link } from 'react-router-dom';
 import { getEtherscanUrl } from '../utils';
 
 const RandomBeaconImpl = require("@keep-network/keep-core/artifacts/KeepRandomBeaconServiceImplV1.json")
@@ -151,7 +152,7 @@ function Entries() {
               <td>{requestedEntries[requestId] ? <a target='_blank' href={getEtherscanUrl(requestedEntries[requestId].txHash, networkId)}>Requested</a> : ''}</td>
               <td>{generatedEntries[requestId] ? <a target='_blank' href={getEtherscanUrl(generatedEntries[requestId].txHash, networkId)}>Generated</a> : ''}</td>
               <td style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>{generatedEntries[requestId] ? <span>{generatedEntries[requestId].value}</span> : ''}</td>
-              <td style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>{requestPubkeyByBlock[requestedEntries[requestId].blockNumber]}</td>
+              <td style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}><Link to={`/random-beacon/groups/${requestPubkeyByBlock[requestedEntries[requestId].blockNumber]}`}>{requestPubkeyByBlock[requestedEntries[requestId].blockNumber]}</Link></td>
             </tr>
           ))}
         </tbody>

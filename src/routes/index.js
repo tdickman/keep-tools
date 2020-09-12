@@ -40,7 +40,7 @@ export default function Routes() {
         <Route path="/" exact component={Initialize} />
         <Route path="/random-beacon/entries" exact component={RandomBeaconEntries} />
         <Route path="/random-beacon/groups" exact component={RandomBeaconGroups} />
-        <Route path="/random-beacon/groups/:blockNumber" exact component={RandomBeaconGroupDetails} />
+        <Route path="/random-beacon/groups/:pubKey" exact component={RandomBeaconGroupDetails} />
         <Route path="/tbtc" exact component={TBTC} />
       </HashRouter>}
     </div>

@@ -8,8 +8,7 @@ import KeepRandomBeaconOperator from "@keep-network/keep-core/artifacts/KeepRand
 
 export default function RandomBeaconGroupDetails(props) {
   const { active, account, library, networkId } = useWeb3Context();
-  // No clean way to retrieve a single event, so passing around block number for now
-  const blockNumber = parseInt(props.match.params.blockNumber)
+  const pubKey = props.match.params.pubKey
   const signer = library.getSigner();
   const keepRandomBeaconOperator = new ethers.Contract(KeepRandomBeaconOperator.networks[networkId].address, KeepRandomBeaconOperator.abi, signer)
   const [group, setGroup] = React.useState({})
@@ -17,8 +16,9 @@ export default function RandomBeaconGroupDetails(props) {
   React.useEffect(() => {
     async function fetchData() {
       const firstActiveGroup = await keepRandomBeaconOperator.getFirstActiveGroupIndex()
-      const events = await keepRandomBeaconOperator.queryFilter(keepRandomBeaconOperator.filters.DkgResultSubmittedEvent(null, null), blockNumber, blockNumber)
-      const ev = events[0]
+      const events = await keepRandomBeaconOperator.queryFilter(keepRandomBeaconOperator.filters.DkgResultSubmittedEvent(null, null))
+      // This will likely get slow over time and need to be optimized..
+      const ev = events.find(e => e.args.groupPubKey == pubKey)
       const groupMembers = await keepRandomBeaconOperator.getGroupMembers(ev.args.groupPubKey)
       const block = await ev.getBlock()
       // const generatedEntres = await keepRandomBeaconOperator.getGroupMembers(ev.args.groupPubKey)

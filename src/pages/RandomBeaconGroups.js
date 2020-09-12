@@ -84,6 +84,7 @@ function ListGroups(props) {
         const groupMembers = await keepRandomBeaconOperator.getGroupMembers(ev.args.groupPubKey)
         console.log(ev)
         setGroups(o => [...o, {
+          pubKey: ev.args.groupPubKey,
           txHash: ev.transactionHash,
           isAMember: groupMembers.indexOf(account) > -1,
           isActive: ev.args[0].toNumber() >= firstActiveGroup,
@@ -119,7 +120,7 @@ function ListGroups(props) {
               <td>{group.groupSize}</td>
               <td>{group.created}</td>
               <td><a href={getEtherscanUrl(group.txHash, networkId)}>TX</a></td>
-              <td><Link to={`/random-beacon/groups/${group.created}`}>Details</Link></td>
+              <td><Link to={`/random-beacon/groups/${group.pubKey}`}>Details</Link></td>
             </tr>
           ))}
         </tbody>
