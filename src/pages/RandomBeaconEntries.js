@@ -9,6 +9,7 @@ import { getEtherscanUrl } from '../utils';
 
 const RandomBeaconImpl = require("@keep-network/keep-core/artifacts/KeepRandomBeaconServiceImplV1.json")
 const RandomBeaconService = require("@keep-network/keep-core/artifacts/KeepRandomBeaconService.json")
+const RandomBeaconOperator = require("@keep-network/keep-core/artifacts/KeepRandomBeaconOperator.json")
 
 export default function RandomBeaconEntries(props) {
   const { active, account, library, networkId } = useWeb3Context();
@@ -62,9 +63,11 @@ function Entries() {
   const { library, networkId } = useWeb3Context();
   const signer = library.getSigner();
   const serviceContract = new ethers.Contract(RandomBeaconService.networks[networkId].address, RandomBeaconImpl.abi, signer);
+  const operatorContract = new ethers.Contract(RandomBeaconOperator.networks[networkId].address, RandomBeaconOperator.abi, signer);
 
   const [requestedEntries, setRequestedEntries] = React.useState({})
   const [generatedEntries, setGeneratedEntries] = React.useState({})
+  const [requestPubkeyByBlock, setRequestPubkeyByBlock] = React.useState({})
 
   React.useEffect(() => {
     async function fetchData() {
@@ -75,6 +78,7 @@ function Entries() {
       let initialRequestedEntries = {}
       for (let ev of requestedEvents) {
         requestedEntries[ev.args[0].toNumber()] = {
+          blockNumber: ev.blockNumber,
           txHash: ev.transactionHash
         }
       }
@@ -91,6 +95,19 @@ function Entries() {
         }
       }
       setGeneratedEntries(initialGeneratedEntries)
+
+      // RelayEntryRequested (operator contract) - this exposes the pub key
+      // used for each generation, and then we can use the block it was
+      // generated in to map it to the group. Kinda convoluted, but it works.
+      // Only one entry can be generated at a time, so we should have no block
+      // colisions.
+      const requestedOperatorFilter = operatorContract.filters.RelayEntryRequested(null, null)
+      const requestedOperatorEvents = await operatorContract.queryFilter(requestedOperatorFilter)
+      let initialRequestPubkeyByBlock = {}
+      for (let ev of requestedOperatorEvents) {
+        initialRequestPubkeyByBlock[ev.blockNumber] = ev.args.groupPublicKey
+      }
+      setRequestPubkeyByBlock(initialRequestPubkeyByBlock)
 
       serviceContract.on('*', function(ev) {
         console.log(ev)
@@ -117,13 +134,14 @@ function Entries() {
 
   return (
     <React.Fragment>
-      <Table striped bordered hover>
+      <Table striped bordered hover style={{tableLayout: "fixed"}}>
         <thead>
           <tr>
             <th>ID</th>
             <th>Request TX</th>
             <th>Generation TX</th>
             <th>Value</th>
+            <th>Group Pub Key</th>
           </tr>
         </thead>
         <tbody>
@@ -132,7 +150,8 @@ function Entries() {
               <td>{requestId}</td>
               <td>{requestedEntries[requestId] ? <a target='_blank' href={getEtherscanUrl(requestedEntries[requestId].txHash, networkId)}>Requested</a> : ''}</td>
               <td>{generatedEntries[requestId] ? <a target='_blank' href={getEtherscanUrl(generatedEntries[requestId].txHash, networkId)}>Generated</a> : ''}</td>
-              <td>{generatedEntries[requestId] ? <span>{generatedEntries[requestId].value}</span> : ''}</td>
+              <td style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>{generatedEntries[requestId] ? <span>{generatedEntries[requestId].value}</span> : ''}</td>
+              <td style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>{requestPubkeyByBlock[requestedEntries[requestId].blockNumber]}</td>
             </tr>
           ))}
         </tbody>

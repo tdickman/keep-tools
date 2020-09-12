@@ -25,7 +25,6 @@ export default function RandomBeaconGroupDetails(props) {
       console.log(ev)
       let date = new Date(0)
       date.setUTCSeconds(block.timestamp)
-      console.log(date)
       setGroup({
         txHash: ev.transactionHash,
         isActive: ev.args[0].toNumber() >= firstActiveGroup,
