@@ -3,6 +3,7 @@ import { useWeb3Context } from "web3-react";
 import { ethers } from 'ethers'
 import Web3Utils from 'web3-utils';
 import Button from 'react-bootstrap/Button';
+import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 import { getEtherscanUrl } from '../utils';
 
@@ -116,11 +117,26 @@ function Entries() {
 
   return (
     <React.Fragment>
-      <ul>
-        {Object.keys(requestedEntries).sort(function(a, b){return a-b}).reverse().map(requestId => (
-          <li key={requestId}>{requestId}{requestedEntries[requestId] ? <span> - <a target='_blank' href={getEtherscanUrl(requestedEntries[requestId].txHash, networkId)}>Requested</a></span> : ''}{generatedEntries[requestId] ? <span> - <a target='_blank' href={getEtherscanUrl(generatedEntries[requestId].txHash, networkId)}>Generated</a> - {generatedEntries[requestId].value}</span> : ''}</li>
-        ))}
-      </ul>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Request TX</th>
+            <th>Generation TX</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.keys(requestedEntries).sort(function(a, b){return a-b}).reverse().map(requestId => (
+            <tr key={requestId}>
+              <td>{requestId}</td>
+              <td>{requestedEntries[requestId] ? <a target='_blank' href={getEtherscanUrl(requestedEntries[requestId].txHash, networkId)}>Requested</a> : ''}</td>
+              <td>{generatedEntries[requestId] ? <a target='_blank' href={getEtherscanUrl(generatedEntries[requestId].txHash, networkId)}>Generated</a> : ''}</td>
+              <td>{generatedEntries[requestId] ? <span>{generatedEntries[requestId].value}</span> : ''}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </React.Fragment>
   )
 }
