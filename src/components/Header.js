@@ -14,6 +14,7 @@ export default function Header(props) {
             <NavDropdown.Item href="#random-beacon/entries">Entries</NavDropdown.Item>
             <NavDropdown.Item href="#random-beacon/groups">Groups</NavDropdown.Item>
           </NavDropdown>
+          <Nav.Link href="#/tbtc">TBTC</Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

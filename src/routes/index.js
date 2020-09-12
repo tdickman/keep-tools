@@ -4,6 +4,7 @@ import Initialize from '../pages/Initialize';
 import RandomBeaconEntries from '../pages/RandomBeaconEntries';
 import RandomBeaconGroups from '../pages/RandomBeaconGroups';
 import RandomBeaconGroupDetails from '../pages/RandomBeaconGroupDetails';
+import TBTC from '../pages/TBTC';
 import { useWeb3Context } from "web3-react";
 import { HashRouter } from 'react-router-dom';
 import Header from '../components/Header';
@@ -40,6 +41,7 @@ export default function Routes() {
         <Route path="/random-beacon/entries" exact component={RandomBeaconEntries} />
         <Route path="/random-beacon/groups" exact component={RandomBeaconGroups} />
         <Route path="/random-beacon/groups/:blockNumber" exact component={RandomBeaconGroupDetails} />
+        <Route path="/tbtc" exact component={TBTC} />
       </HashRouter>}
     </div>
   );
