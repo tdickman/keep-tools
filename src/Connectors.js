@@ -23,7 +23,7 @@ const supportedNetworkURLs = {
 // const defaultNetwork = 1;
 
 const Metamask = new InjectedConnector({
-  supportedNetworks: [3]
+  supportedNetworks: [1, 3]
 });
 
 const Network = new NetworkOnlyConnector({

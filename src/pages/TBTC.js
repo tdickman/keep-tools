@@ -51,9 +51,6 @@ function KeepList() {
         const keepAddress = await factory.getKeepAtIndex(i)
         const keep = new ethers.Contract(keepAddress, BondedECDSAKeep.abi, signer)
         const [members, keepPublicKey, isActive, bondWei] = await Promise.all([keep.getMembers(), keep.publicKey(), keep.isActive(), keep.checkBondAmount()])
-        if (!isActive) {
-          continue
-        }
         const bond = Web3Utils.fromWei(bondWei._hex)
 
         setKeeps(o => [...o, {

@@ -14,6 +14,7 @@ import { SUPPORTED_NETWORKS } from '../config'
 
 export default function Routes() {
   const context = useWeb3Context();
+  console.log(context)
 
   return (
     <div>
